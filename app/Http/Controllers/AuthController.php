@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+
 
 
 class AuthController extends Controller
@@ -24,12 +26,15 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        // Proceed with storing user data
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
+
         ]);
+
+        $user->remember_token = Str::random(64);
+        $user->save();
 
         Mail::to($request->email)
                 ->send(new RegisterMail($user));
@@ -78,7 +83,7 @@ class AuthController extends Controller
 
 
     public function verify($id){
-        $user = User::findOrFail($id);
+        $user = User::where('remember_token', $id)->first();
 
         if ($user->email_verified_at) {
             return redirect()->route('login')->with('status', 'Email is already verified.');
@@ -88,6 +93,12 @@ class AuthController extends Controller
 
 
         return redirect()->route('verified')->with('success', 'Email verified successfully! You can now log in.');
+    }
+
+    public function logout(){
+        Auth::logout();
+
+        return redirect()->route('home');
     }
 
 

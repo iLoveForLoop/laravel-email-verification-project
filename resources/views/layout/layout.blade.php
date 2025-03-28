@@ -11,6 +11,7 @@
 
 <body>
     <div class=" h-screen flex flex-col justify-start items-center bg-gray-100">
+
         @yield('content')
     </div>
 
