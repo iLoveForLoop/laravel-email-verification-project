@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\RecoveryMain;
 use App\Mail\RegisterMail;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -99,6 +100,34 @@ class AuthController extends Controller
         Auth::logout();
 
         return redirect()->route('home');
+    }
+
+    public function forget(){
+        return view('login.forget');
+    }
+
+    public function recovery($token){
+        $user = User::where('remember_token', $token)->first();
+
+        return view('login.recovery', compact('user'));
+
+    }
+
+    public function send_recovery_link(Request $request){
+        $email = $request->email;
+        $user = User::where('email', $email)->first();
+        Mail::to($user->email)
+                ->send(new RecoveryMain($user));
+
+        return redirect()->route('sent');
+    }
+
+    public function changepassword(Request $request, $user){
+        $user->password = $request->password;
+        $user->save();
+
+        return redirect()->route('dashboard', compact('user'));
+
     }
 
 

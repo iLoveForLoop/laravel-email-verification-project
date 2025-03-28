@@ -22,4 +22,12 @@ Route::get('/verified', function (){
     return view('verified.index');
 })->name('verified');
 
+
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/forget', [AuthController::class, 'forget'])->name('forget');
+Route::get('/recover/{token}', [AuthController::class, 'recover'])->name('recover');
+Route::post('/send_recovery_link', [AuthController::class, 'send_recovery_link'])->name('send_recovery_link');
+
+Route::get('/sent',function (){
+    return view('login.recovery');
+});
