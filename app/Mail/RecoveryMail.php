@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class RecoveryMain extends Mailable
+class RecoveryMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -37,7 +37,10 @@ class RecoveryMain extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'email.recovery',
+            view: 'email.forget',
+            with: [
+                'user' => $this->user,
+            ]
         );
     }
 

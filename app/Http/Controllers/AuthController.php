@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\RecoveryMain;
+use App\Mail\RecoveryMail;
 use App\Mail\RegisterMail;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -102,28 +102,50 @@ class AuthController extends Controller
         return redirect()->route('home');
     }
 
+
+
+    //FORGET PASS CONTROLLER
+
+    //show send email
     public function forget(){
         return view('login.forget');
     }
 
-    public function recovery($token){
-        $user = User::where('remember_token', $token)->first();
 
-        return view('login.recovery', compact('user'));
+    //shows the enter new pass
+    public function recover($token){
+        $user = User::where('remember_token', $token)->first();
+        // dd($user);
+        return view('login.recover', compact('user'));
 
     }
 
+
+    //send the recovery to link to the email
     public function send_recovery_link(Request $request){
         $email = $request->email;
         $user = User::where('email', $email)->first();
+
+        if(!$user){
+            return redirect()->back()->withErrors('Invalid email');
+        }
+
+        $user->remember_token = Str::random(64);
+        $user->save();
+
         Mail::to($user->email)
-                ->send(new RecoveryMain($user));
+                ->send(new RecoveryMail($user));
 
         return redirect()->route('sent');
     }
 
-    public function changepassword(Request $request, $user){
-        $user->password = $request->password;
+    public function changepassword(Request $request, User $user){
+
+        $request->validate([
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        $user->password = bcrypt($request->password);
         $user->save();
 
         return redirect()->route('dashboard', compact('user'));

@@ -38,7 +38,8 @@
                             class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                             Login
                         </button>
-                        <a href="#" class="text-sm text-indigo-600 hover:text-indigo-700">Forgot Password?</a>
+                        <a href="{{ url(route('forget')) }}" class="text-sm text-indigo-600 hover:text-indigo-700">Forgot
+                            Password?</a>
                     </div>
                 </form>
             </div>

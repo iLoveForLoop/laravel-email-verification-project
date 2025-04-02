@@ -24,10 +24,16 @@ Route::get('/verified', function (){
 
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
+//RECOVER PASS ROUTES
+
 Route::get('/forget', [AuthController::class, 'forget'])->name('forget');
 Route::get('/recover/{token}', [AuthController::class, 'recover'])->name('recover');
 Route::post('/send_recovery_link', [AuthController::class, 'send_recovery_link'])->name('send_recovery_link');
+Route::put('/changepassword/{user}', [AuthController::class, 'changepassword'])->name('change-password');
+
 
 Route::get('/sent',function (){
     return view('login.recovery');
-});
+})->name('sent');
